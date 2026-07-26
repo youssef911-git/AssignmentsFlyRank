@@ -4,7 +4,7 @@ def second_largest(numbers):
         
     largest = float('-inf')
     second_largest = float('-inf')
-    
+    #djfij
     for num in numbers:
         if num > largest:
             # Found a new largest, so the old largest becomes the second largest
@@ -20,3 +20,4 @@ def second_largest(numbers):
     return second_largest
 
 print(second_largest([6, 7, 9, 2, 4, 5]))  # Output: 7
+#djj
