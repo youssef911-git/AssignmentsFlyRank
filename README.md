@@ -83,8 +83,6 @@ Body:
 
 Returns `400` if a task with the same `Title` already exists.
 
-> ⚠️ **Known limitation:** `id` is currently supplied by the client and is not checked for uniqueness. Two tasks can end up with the same `id`, which will confuse lookups/updates/deletes. If you extend this project, consider auto-generating `id` server-side instead (e.g. `max(existing ids) + 1`).
-
 ### PATCH `/update-task/{task_id}`
 
 Body — send **only** the fields you want to change:
