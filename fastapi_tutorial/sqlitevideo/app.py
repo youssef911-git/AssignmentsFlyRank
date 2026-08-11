@@ -1,16 +1,16 @@
-from contextlib import asynccontextmanager
+﻿from contextlib import asynccontextmanager
 from typing import Optional
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
-import videosqlite
+import repository
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    videosqlite.init_db()
+    repository.init_db()
     yield
 
 
@@ -36,12 +36,12 @@ def read_tasks(
     done: Optional[bool] = None,
     sort: Optional[str] = None,
 ):
-    return videosqlite.list_tasks(search=search, done=done, sort=sort)
+    return repository.list_tasks(search=search, done=done, sort=sort)
 
 
 @app.get("/tasks/{task_id}")
 def read_task(task_id: int):
-    task = videosqlite.get_task(task_id)
+    task = repository.get_task(task_id)
     if task is None:
         return _error(404, "Task not found")
     return task
@@ -52,7 +52,7 @@ def create_task(task: TaskIn):
     title = task.title.strip()
     if not title:
         return _error(400, "Title is required")
-    created = videosqlite.create_task(title)
+    created = repository.create_task(title)
     if created is None:
         return _error(400, "Task already exists")
     return created
@@ -60,26 +60,26 @@ def create_task(task: TaskIn):
 
 @app.get("/stats")
 def stats():
-    return videosqlite.get_stats()
+    return repository.get_stats()
 
 
 @app.put("/tasks/{task_id}")
 def update_task(task_id: int, task: TaskUpdate):
-    current = videosqlite.get_task(task_id)
+    current = repository.get_task(task_id)
     if current is None:
         return _error(404, "Task not found")
     title = task.title.strip() if task.title is not None else current["title"]
     if not title:
         return _error(400, "Title is required")
     done = task.done if task.done is not None else current["done"]
-    return videosqlite.update_task(task_id, title, done)
+    return repository.update_task(task_id, title, done)
 
 
 @app.delete("/tasks/{task_id}")
 def delete_task(task_id: int):
-    if videosqlite.get_task(task_id) is None:
+    if repository.get_task(task_id) is None:
         return _error(404, "Task not found")
-    videosqlite.delete_task(task_id)
+    repository.delete_task(task_id)
     return Response(status_code=204)
 
 
